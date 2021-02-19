@@ -11,12 +11,10 @@ def minOperations(n):
     """
     Function
     """
+    div, operator, localN = 2, 0, n
+
     if n <= 1:
         return 0
-
-    div = 2
-    operator = 0
-    localN = n
     while localN > 1:
         if (localN % div) == 0:
             localN = localN // div
