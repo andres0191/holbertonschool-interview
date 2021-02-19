@@ -14,7 +14,8 @@ def minOperations(n):
     if n <= 1:
         return 0
 
-    div = 2, operator = 0
+    div = 2
+    operator = 0
     localN = n
     while localN > 1:
         if (localN % div) == 0:
