@@ -8,44 +8,27 @@
  */
 int is_palindrome(listint_t **head)
 {
-    int size_to_all = size_to_linkedList(*head);
-    int size_to_half = (size_to_all / 2), step = 0;
-    listint_t *left = *head, *right = NULL;
-    size_t p = 0, q = 1;
+int list[1000000]; /* Buffer for the list */
+long n = 0, /* Number of elements */ i; /* Iterator of elements */
+listint_t *node;
 
-    if (!size_to_all)
-        return (1);
+	if (head == NULL)
+		return (0);
+	if (((*head)->next == NULL) || (*head == NULL))
+		return (1);
 
-    for (; step < size_to_half; ++step)
-    {
-        right = *head;
+	node = *head;
+	while (node != NULL)
+	{
+		list[n] = node->n;
+		node = node->next;
+		n++;
+	}
 
-        p = (size_to_all - step);
-        /* Get the node of the right */
-        for (q = 1; (q < p) && (right->next); ++j)
-            right = right->next;
-
-        if (left->n != right->n)
-            return (0);
-
-        left = left->next;
-    }
-
-    return (1);
-}
-
-/**
- * size_to_linkedList - Look amount of nodes
- * @head: Copy of the Head node
- *
- * Return: Length of the linked list
- */
-int size_to_linkedList(listint_t *head)
-{
-    int i = 0;
-
-    for (; head != NULL; ++i, (head = head->next))
-        ;
-
-    return (i);
+	for (i = 0; i < (n / 2); i++)
+	{
+		if (list[i] != list[n - i - 1])
+			return (0);
+	}
+	return (1);
 }
