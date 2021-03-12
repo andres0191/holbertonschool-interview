@@ -16,46 +16,39 @@
     status codes should be printed in ascending order
 """
 
-import sys
-stcd = {"200": 0, "301": 0, "400": 0, "401": 0,
-        "403": 0, "404": 0, "405": 0, "500": 0}
-summ = 0
+if __name__ == '__main__':
 
+    def printer(size, d):
+        """Print function"""
+        sort = sorted(d.keys())
+        print("File size: {:d}".format(size))
+        for i in sort:
+            if d[i] != 0:
+                print("{}: {}".format(i, d[i]))
 
-def prn_stats():
-    """
-    Function that print stats about log
-    """
-    global summ
+    size = 0
+    d = {"200": 0, "301": 0, "400": 0, "401": 0,
+         "403": 0, "404": 0, "405": 0, "500": 0}
 
-    print('File size: {}'.format(summ))
-    stcdor = sorted(stcd.keys())
-    for each in stcdor:
-        if stcd[each] > 0:
-            print('{}: {}'.format(each, stcd[each]))
-
-
-if __name__ == "__main__":
-    cnt = 0
+    counter = 0
     try:
-        """ Iter the standar input """
-        for data in sys.stdin:
-            try:
-                fact = data.split(' ')
-                """ If there is a status code """
-                if fact[-2] in stcd:
-                    stcd[fact[-2]] += 1
-                """ If there is a lenght """
-                summ += int(fact[-1])
-            except:
-                pass
-            """ Printing control """
-            cnt += 1
-            if cnt == 10:
-                prn_stats()
-                cnt = 0
+        with open(0) as f:
+            for line in f:
+                counter += 1
+                arr = line.split()
+                try:
+                    size += int(arr[-1])
+                except:
+                    pass
+                try:
+                    st = arr[-2]
+                    if st in d:
+                        d[st] += 1
+                except:
+                    pass
+                if counter % 10 == 0:
+                    printer(size, d)
+            printer(size, d)
     except KeyboardInterrupt:
-        prn_stats()
+        printer(size, d)
         raise
-    else:
-        prn_stats()
