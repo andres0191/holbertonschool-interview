@@ -16,8 +16,6 @@
     status codes should be printed in ascending order
 """
 
-#!/usr/bin/python3
-'''doc.'''
 import sys
 
 
