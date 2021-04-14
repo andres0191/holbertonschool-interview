@@ -1,45 +1,48 @@
 #!/usr/bin/python3
 """
-    Reads stdin line by line and computes metrics:
-    For every 10 lines:
-        - print the status number with the number of times it
-        appears
-        - print the sum of the file sizes
+Task - Script that reads stdin line by line and computes metrics
 """
+
+import sys
+
+
 if __name__ == "__main__":
-    import sys
-    import signal
+    st_code = {"200": 0,
+               "301": 0,
+               "400": 0,
+               "401": 0,
+               "403": 0,
+               "404": 0,
+               "405": 0,
+               "500": 0}
+    count = 1
+    file_size = 0
 
-    c = fileSize = 0
-    statCount = {"200": 0, "301": 0, "400": 0, "401": 0, "403": 0,
-                 "404": 0, "405": 0, "500": 0}
+    def parse_line(line):
+        """ Read, parse and grab data"""
+        try:
+            parsed_line = line.split()
+            status_code = parsed_line[-2]
+            if status_code in st_code.keys():
+                st_code[status_code] += 1
+            return int(parsed_line[-1])
+        except Exception:
+            return 0
 
-    def handleTen(statCount, fileSize):
-        print("File size: {}".format(fileSize))
-        for key in sorted(statCount.keys()):
-            if statCount[key] == 0:
-                continue
-            print("{}: {}".format(key, statCount[key]))
+    def print_stats():
+        """print stats in ascending order"""
+        print("File size: {}".format(file_size))
+        for key in sorted(st_code.keys()):
+            if st_code[key]:
+                print("{}: {}".format(key, st_code[key]))
 
     try:
         for line in sys.stdin:
-            c += 1
-            split = line.split(" ")
-            try:
-                status = split[-2]
-                fileSize += int(split[-1])
-
-                if status in statCount:
-                    statCount[status] += 1
-            except Exception:
-                pass
-
-            if c % 10 == 0:
-                handleTen(statCount, fileSize)
-
-        else:
-            handleTen(statCount, fileSize)
-
-    except (KeyboardInterrupt, SystemExit):
-        handleTen(statCount, fileSize)
+            file_size += parse_line(line)
+            if count % 10 == 0:
+                print_stats()
+            count += 1
+    except KeyboardInterrupt:
+        print_stats()
         raise
+    print_stats()
