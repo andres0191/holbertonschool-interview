@@ -1,56 +1,45 @@
 #!/usr/bin/python3
-"""script that reads stdin line by
-    line and computes metrics:
-    Input format: <IP Address> - [<date>] "GET /projects/260 HTTP/1.1"
-    <status code> <file size> (if the format is not this one, the
-    line must be skipped)
-    After every 10 lines and/or a keyboard interruption (CTRL + C),
-    print these statistics from the beginning:
-    Total file size: File size: <total size>
-    where <total size> is the sum of all previous <file size>
-    (see input format above)
-    Number of lines by status code:
-    possible status code: 200, 301, 400, 401, 403, 404, 405 and 500
-    if a status code doesn’t appear or is not an integer, don’t print anything for this status code
-    format: <status code>: <number>
-    status codes should be printed in ascending order
 """
-
-import sys
-
-
-def get_match(line):
-    '''doc.'''
-    try:
-        line = line[:-1]
-        words = line.split(" ")
-        size[0] += int(words[-1])
-        code = int(words[-2])
-        if code in logs:
-            logs[code] += 1
-    except:
-        pass
-
-
-def p_stats():
-    '''doc'''
-    print("File size: {}".format(size[0]))
-    for k in sorted(logs.keys()):
-        if logs[k]:
-            print("{}: {}".format(k, logs[k]))
-
-
+    Reads stdin line by line and computes metrics:
+    For every 10 lines:
+        - print the status number with the number of times it
+        appears
+        - print the sum of the file sizes
+"""
 if __name__ == "__main__":
-    size = [0]
-    logs = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
-    i = 1
+    import sys
+    import signal
+
+    c = fileSize = 0
+    statCount = {"200": 0, "301": 0, "400": 0, "401": 0, "403": 0,
+                 "404": 0, "405": 0, "500": 0}
+
+    def handleTen(statCount, fileSize):
+        print("File size: {}".format(fileSize))
+        for key in sorted(statCount.keys()):
+            if statCount[key] == 0:
+                continue
+            print("{}: {}".format(key, statCount[key]))
+
     try:
         for line in sys.stdin:
-            get_match(line)
-            if i % 10 == 0:
-                p_stats()
-            i += 1
-    except KeyboardInterrupt:
-        p_stats()
+            c += 1
+            split = line.split(" ")
+            try:
+                status = split[-2]
+                fileSize += int(split[-1])
+
+                if status in statCount:
+                    statCount[status] += 1
+            except Exception:
+                pass
+
+            if c % 10 == 0:
+                handleTen(statCount, fileSize)
+
+        else:
+            handleTen(statCount, fileSize)
+
+    except (KeyboardInterrupt, SystemExit):
+        handleTen(statCount, fileSize)
         raise
-    p_stats()
