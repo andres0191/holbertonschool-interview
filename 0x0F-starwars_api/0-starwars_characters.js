@@ -2,19 +2,26 @@
 
 const request = require('request');
 
-/**
- * Prints all characters of specified Star Wars movie
- */
-request(`https://swapi-api.hbtn.io/api/films/${process.argv[2]}/`, async (err, res, body) => {
-  if (err) { return console.log(err); }
+function filmRequest (url) {
+  request(url, async function (error, response, body) {
+    for (const charURL of JSON.parse(body).characters) {
+      if (error) {
+        console.log(`Error: ${error}`);
+        return;
+      }
+      const charJSON = await requestChar(charURL);
+      console.log(JSON.parse(charJSON).name);
+    }
+  });
+}
 
-  const chars = JSON.parse(body).characters;
-  for (const c in chars) {
-    const res = await new Promise((resolve, reject) => {
-      request(chars[c], (err, res, html) => {
-        if (err) { reject(err); } else { resolve(JSON.parse(html).name); }
-      });
+function requestChar (url) {
+  return new Promise((resolve, reject) => {
+    request(url, function (error, response, body) {
+      if (error) reject(error);
+      else resolve(body);
     });
-    console.log(res);
-  }
-});
+  });
+}
+
+filmRequest(`https://swapi-api.hbtn.io/api/films/${process.argv[2]}/`);
