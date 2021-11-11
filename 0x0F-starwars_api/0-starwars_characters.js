@@ -1,37 +1,34 @@
 #!/usr/bin/node
-
-const requestOld = require('request');
-const util = require('util');
-
-const request = util.promisify(requestOld);
-
+const request = require('request');
 const myArgs = process.argv.slice(2);
+const options = {
+  url: 'https://swapi-api.hbtn.io/api/films/' + myArgs
 
-if (myArgs.length !== 1) {
-  console.log("Invalid number of arguments, use like: './starwars 3'");
-  process.exit(1);
-}
-
-const movieNum = myArgs[0];
-
-async function main () {
-  const rawData = await request(`https://swapi-api.hbtn.io/api/films/${movieNum}/`);
-
-  const data = JSON.parse(rawData.body);
-
-  const characters = [];
-
-  for (let i = 0; i < data.characters.length; i++) {
-    characters.push(request(data.characters[i]).then((result) =>
-      JSON.parse(result.body)
-    ));
+};
+let dada;
+request(options, async (err, res, body) => {
+  const json = JSON.parse(body);
+  dada = json.characters;
+  if (err) {
+    throw (err);
   }
+  for (const i in dada) {
+    await sleep(300);
+    const options = {
+      url: dada[i]
+    };
 
-  const charactersResult = await Promise.all(characters);
-
-  for (let i = 0; i < charactersResult.length; i++) {
-    console.log(charactersResult[i].name);
+    request(options, (err, res, body) => {
+      const da = JSON.parse(body);
+      console.log(da.name);
+      if (err) {
+        throw (err);
+      }
+    });
   }
+});
+function sleep (ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
 }
-
-main();
