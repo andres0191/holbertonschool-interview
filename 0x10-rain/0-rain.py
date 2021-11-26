@@ -23,14 +23,9 @@ def rain(walls):
 
     for i in range(1, lenght):
         leftMax[i] = max(leftMax[i - 1], walls[i])
-        #  leftMax will be: [0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3]
     for i in range(lenght - 2, -1, -1):
         rightMax[i] = max(rightMax[i + 1], walls[i])
-        #  rightMax will be: [3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 1]
     for i in range(lenght):
-        #  So, we compare both arrays to find the minimum number and
-        #  then, we compare it with the actual height of the wall and
-        #  the substraction will be the retained water:
         water = water + min(leftMax[i], rightMax[i]) - walls[i]
 
     return water
