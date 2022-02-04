@@ -1,8 +1,6 @@
 #!/usr/bin/python3
 """
 Module for 0-making_change
-Holberton Specializations > Interview Preparation > Algorithms
-0x19. Making Change
 """
 
 
